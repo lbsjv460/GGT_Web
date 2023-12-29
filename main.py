@@ -6,8 +6,7 @@ import string
 import os
 
 app = Flask(__name__)
-
-count = 0  # Global count variable
+count = 0
 
 
 @app.route('/')
@@ -17,7 +16,7 @@ def index():
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    global count  # Access the global count variable
+    global count
     count += 1  # Increment the count for each request
 
     base_url = request.json.get('baseURL')
