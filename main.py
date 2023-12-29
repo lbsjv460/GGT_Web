@@ -53,8 +53,8 @@ def submit():
 
     response_data = {'email': email, 'status': status,
                      'response_time': response_time, 'count': count}
-    print("email: ", email, "status: ", status,
-          "response_time: ", response_time, "count: ", count)
+    print("email: ", email, "; status: ", status,
+          "; response_time: ", response_time, "; count: ", count)
     return jsonify(response_data)
 
 
