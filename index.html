@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Test Form</title>
+</head>
+<body>
+    <form id="testForm" action="/submit" method="post">
+        <label for="baseURL">Base URL:</label>
+        <input type="text" name="baseURL" required><br>
+
+        <label for="times">Number of times:</label>
+        <input type="number" name="times" required><br>
+
+        <label for="delay">Delay time (seconds):</label>
+        <input type="number" step="0.00001" name="delay" required><br>
+
+        <label for="dataSize">Data size:</label>
+        <select name="dataSize" required>
+            <option value="1024">1KB</option>
+            <option value="512000">500KB</option>
+            <option value="1048576">1MB</option>
+            <option value="10485760">10MB</option>
+            <option value="26214400">25MB</option>
+        </select><br>
+
+        <button type="submit">Submit</button>
+    </form>
+
+    <div id="output-container">
+        <h2>Output:</h2>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            document.getElementById('testForm').addEventListener('submit', function (event) {
+                event.preventDefault();
+
+                const base_url = document.querySelector('input[name="baseURL"]').value;
+                const times = parseInt(document.querySelector('input[name="times"]').value);
+                const delay = parseFloat(document.querySelector('input[name="delay"]').value);
+                const data_size_option = parseFloat(document.querySelector('select[name="dataSize"]').value);
+
+                makeAsyncRequests(base_url, times, delay, data_size_option);
+            });
+
+            function makeAsyncRequests(base_url, times, delay, data_size_option) {
+                let count = 0;
+
+                function sendRequest() {
+                    if (count < times) {
+                        fetch('/submit', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                baseURL: base_url,
+                                times: times,
+                                delay: delay,
+                                dataSize: data_size_option,
+                            }),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            updateOutput(data);
+                            setTimeout(sendRequest, delay * 1000);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+
+                        count++;
+                    }
+                }
+
+                sendRequest();
+            }
+
+            function updateOutput(data) {
+                const outputDiv = document.getElementById('output');
+                const entryDiv = document.createElement('div');
+                entryDiv.innerHTML = `<p>${data.email} - ${data.status} - Response Time: ${data.response_time}s - Count: ${data.count}</p>`;
+                outputDiv.appendChild(entryDiv);
+            }
+        });
+    </script>
+</body>
+</html>
