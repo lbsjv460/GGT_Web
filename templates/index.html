@@ -89,21 +89,22 @@
         document.addEventListener('DOMContentLoaded', function () {
             document.getElementById('testForm').addEventListener('submit', function (event) {
                 event.preventDefault();
-
+    
                 const base_url = document.querySelector('input[name="baseURL"]').value;
                 const times = parseInt(document.querySelector('input[name="times"]').value);
                 const delay = parseFloat(document.querySelector('input[name="delay"]').value);
                 const data_size_option = parseFloat(document.querySelector('select[name="dataSize"]').value);
-
+    
                 makeAsyncRequests(base_url, times, delay, data_size_option);
             });
-
+    
             function makeAsyncRequests(base_url, times, delay, data_size_option) {
                 let count = 0;
-
+    
                 function sendRequest() {
                     if (count < times) {
-                        fetch('/submit', {
+                        const token = Math.random().toString(36).substring(7); // Generate a random token
+                        fetch(`/submit?token=${token}`, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -123,14 +124,14 @@
                         .catch(error => {
                             console.error('Error:', error);
                         });
-
+    
                         count++;
                     }
                 }
-
+    
                 sendRequest();
             }
-
+    
             function updateOutput(data) {
                 const outputDiv = document.getElementById('output');
                 const entryDiv = document.createElement('div');
@@ -139,5 +140,6 @@
             }
         });
     </script>
+    
 </body>
 </html>
