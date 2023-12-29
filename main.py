@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, jsonify
 import requests
 import time
 import random
@@ -6,7 +6,7 @@ import string
 import os
 
 app = Flask(__name__)
-app.secret_key = '153531513'  # Change this to a secure secret key
+count = 0
 
 
 @app.route('/')
@@ -16,11 +16,8 @@ def index():
 
 @app.route('/submit', methods=['POST'])
 def submit():
-    if 'count' not in session:
-        session['count'] = 0
-
-    # Increment the count for each request in the current session
-    session['count'] += 1
+    global count
+    count += 1  # Increment the count for each request
 
     base_url = request.json.get('baseURL')
     times = int(request.json.get('times'))
@@ -54,10 +51,9 @@ def submit():
     response_time = round(end_time - start_time, 4)
 
     response_data = {'email': email, 'status': status,
-                     'response_time': response_time, 'count': session['count']}
-
+                     'response_time': response_time, 'count': count}
     print("email: ", email, "; status: ", status,
-          "; response_time: ", response_time, "; count: ", session['count'])
+          "; response_time: ", response_time, "; count: ", count)
     return jsonify(response_data)
 
 
@@ -75,4 +71,4 @@ def get_password_from_file(file_name):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, threaded=True)
+    app.run(debug=True)
