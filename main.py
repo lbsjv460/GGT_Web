@@ -19,7 +19,9 @@ def submit():
     global count
     count += 1  # Increment the count for each request
 
+    type = request.json.get('Type')
     base_url = request.json.get('baseURL')
+    bOption = request.json.get('bOption')
     times = int(request.json.get('times'))
     delay = float(request.json.get('delay'))
     data_size_option = int(request.json.get('dataSize'))
@@ -39,13 +41,22 @@ def submit():
 
     start_time = time.time()
 
-    try:
-        response = requests.post(
-            'https://' + base_url + '/api/v1/passport/auth/register', json={'email': email, 'password': password})
-        response.raise_for_status()
-        status = 'OK'
-    except requests.exceptions.RequestException as e:
-        status = f'Error: {e}'
+    if type == "v2board":
+        try:
+            response = requests.post('https://' + base_url + '/api/v1/passport/auth/' +
+                                     bOption, json={'email': email, 'password': password})
+            response.raise_for_status()
+            status = 'OK'
+        except requests.exceptions.RequestException as e:
+            status = f'Error: {e}'
+    elif type == "pfgo":
+        try:
+            response = requests.post('https://' + base_url + '/ajax/' +
+                                     bOption, json={'username': password, 'password': password})
+            response.raise_for_status()
+            status = 'OK'
+        except requests.exceptions.RequestException as e:
+            status = f'Error: {e}'
 
     end_time = time.time()
     response_time = round(end_time - start_time, 4)

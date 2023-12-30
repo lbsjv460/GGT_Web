@@ -59,6 +59,12 @@
 </head>
 <body>
     <form id="testForm" action="/submit" method="post">
+        <label for="Type">Type:</label>
+        <select name="Type" required>
+            <option value="v2board">v2board</option>
+            <option value="pfgo">pfgo</option>
+        </select>
+
         <label for="baseURL">Base URL:</label>
         <input type="text" name="baseURL" required>
 
@@ -77,6 +83,12 @@
             <option value="26214400">25MB</option>
         </select>
 
+        <label for="bOption">Method option:</label>
+        <select name="bOption" required>
+            <option value="login">Login</option>
+            <option value="register">Register</option>
+        </select>
+
         <button type="submit">Submit</button>
     </form>
 
@@ -90,15 +102,17 @@
             document.getElementById('testForm').addEventListener('submit', function (event) {
                 event.preventDefault();
 
+                const T_Type = document.querySelector('select[name="Type"]').value;
                 const base_url = document.querySelector('input[name="baseURL"]').value;
+                const b_Option = document.querySelector('select[name="bOption"]').value;
                 const times = parseInt(document.querySelector('input[name="times"]').value);
                 const delay = parseFloat(document.querySelector('input[name="delay"]').value);
                 const data_size_option = parseFloat(document.querySelector('select[name="dataSize"]').value);
 
-                makeAsyncRequests(base_url, times, delay, data_size_option);
+                makeAsyncRequests(T_Type, base_url, b_Option, times, delay, data_size_option);
             });
 
-            function makeAsyncRequests(base_url, times, delay, data_size_option) {
+            function makeAsyncRequests(T_Type, base_url, b_Option, times, delay, data_size_option) {
                 let count = 0;
 
                 function sendRequest() {
@@ -109,7 +123,9 @@
                                 'Content-Type': 'application/json',
                             },
                             body: JSON.stringify({
+                                Type: T_Type,
                                 baseURL: base_url,
+                                bOption: b_Option,
                                 times: times,
                                 delay: delay,
                                 dataSize: data_size_option,
